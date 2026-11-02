@@ -42,8 +42,8 @@ for(const e of B.en){const T=ET[e.t];e.cd-=dt;e.fl-=dt;e.w+=dt;if(e.x>P.x+e.stop
 for(const s of B.tr){s.l-=dt;if(s.shell){s.x-=130*dt;if(s.x<=P.x+8){s.l=0;boom(P.x,GY-8,12);hurtP(s.d)}}}
 for(const e of B.en)if(e.hp<=0){score+=ET[e.t].sc;boom(e.x,GY-8,e.t=='inf'||e.t=='rush'?6:22);e.dead=1}
 B.en=B.en.filter(e=>!e.dead);B.tr=B.tr.filter(s=>s.l>0);B.px=B.px.filter(p=>(p.x+=p.vx*dt,p.y+=p.vy*dt,p.vy+=200*dt,p.l-=dt)>-9&&p.l>0);B.fx=B.fx.filter(f=>(f.y-=14*dt,f.l-=dt)>-9&&f.l>0);
-if(P.hp<=0&&!B.end){B.end=-1;B.endT=1}else if(!B.q.length&&!B.en.length&&!B.end){B.end=1;B.endT=.9}
-if(B.end){B.endT-=dt;if(B.endT<=0)B.end==1?won():lost()}}
+if(P.hp<=0&&!B.end){B.end=-1;B.endT=1}else if(!B.def&&!B.q.length&&!B.en.length&&!B.end){B.end=1;B.endT=.9}
+if(B.end&&!B.def){B.endT-=dt;if(B.endT<=0)B.end==1?won():lost()}}
 function lost(){P.hp=0;if(score>best){best=score;try{localStorage.setItem('ikbest',best)}catch(e){}}S='over'}
 function won(){const ti=stage/3|0,boss=stage%3==2;score+=stage*50;const s=pk(SL),r=cl(Math.floor(R()*(1+stage/4))+(boss?1:0),0,3),bud=(3+stage*1.2)*(1+r*.5);const g={s,r,nm:RN[r]+' '+NM[s][ti],atk:0,def:0,hp:0};if(s=='wep')g.atk=bud*.8;else if(s=='hel'){g.def=bud*.5;g.hp=bud}else if(s=='arm'){g.def=bud*.8;g.hp=bud*2}else{g.hp=bud*1.5;g.def=bud*.3}for(const k of['atk','def','hp'])g[k]=Math.round(g[k]);g.c=RC[r];fixLoot(g,ti,bud);if(!P.gear[s]){P.gear[s]=g;msg='LOOT EQUIPPED: '+g.nm}else{P.inv.push(g);msg='LOOT: '+g.nm+' (see LOADOUT)';if(P.inv.length>9){P.inv.sort((a,b)=>scr(a)-scr(b));msg+=' - dropped '+P.inv.shift().nm}}stats();stage++;if(stage>=12){S='win';if(score>best){best=score;try{localStorage.setItem('ikbest',best)}catch(e){}}return}
 const pool=[];for(const k in AB){const o=P.ab.find(a=>a.k==k);pool.push(o?{n:AB[k].n+' +'+(o.lv+1),d:'+25% power',f:()=>o.lv++}:{n:'NEW: '+AB[k].n,d:'New ability, cd '+AB[k].cd+'s',f:()=>P.ab.push({k,lv:0})})}
@@ -509,7 +509,7 @@ function drawSurvivalRouteMap(){
   T('HP '+Math.max(0,P.hp|0)+' / '+(P.mhp|0)+'     ATK '+(P.atk|0)+'     DEF '+(P.def|0)+'     £'+(P.money||0),W/2,178,'#e0d5b6','center',8);
   btn(W/2-145,190,90,23,'CUSTOMISE [C]','#9c6',7);
   btn(W/2-45,190,90,23,'DEPLOY','#c8a64a',10);
-  btn(W/2+55,190,90,23,'SHOP [S]','#fc4',8);
+  btn(W/2+55,216,90,14,'SHOP [S]','#fc4',7);
   T('Completed locations remain secured. Threat and rewards increase along the route.',W/2,232,'#778476','center',7);
   T('WASD / ARROWS: MOVE     SPACE: ACTION     1–7: ABILITIES',W/2,254,'#9aa88a','center',7);
 }
@@ -534,6 +534,7 @@ startDef=function(){
   P.hp=P.mhp;
   beginSurvivalLocation(0);
 };
+const newRunBeforeProgression=newRun;newRun=function(){newRunBeforeProgression();B=null};
 const drawMapBeforeProgression=drawMap;
 drawMap=function(){
   if(B&&B.def){drawSurvivalRouteMap();return;}
@@ -576,7 +577,7 @@ bat=function(dt){
     P.hp=Math.min(P.mhp,P.hp+P.mhp*.35);
     B.routeIndex=next;
     B.en=[];B.q=[];B.tr=[];B.traps=[];B.tool=null;
-    B.tm=DAYLEN;B.n=0;B.ni=1;
+    B.tm=0;B.n=0;B.ni=1;
     stage=Math.min(9,next*3);
     S='map';
   }
