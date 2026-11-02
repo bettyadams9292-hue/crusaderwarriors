@@ -54,7 +54,7 @@ function man(x,y,f,o,w){x|=0;y|=0;X.fillStyle='rgba(0,0,0,.3)';X.fillRect(x-6,y-
 function tk(x,y,s,fl,boss){X.save();X.translate(x|0,y|0);X.scale(s,s);X.fillStyle='rgba(0,0,0,.3)';X.fillRect(-20,-1,40,3);X.fillStyle='#1c1c1c';X.fillRect(-19,-7,38,7);X.fillStyle='#444';for(let i=-16;i<=16;i+=8)X.fillRect(i-2,-5,4,4);X.fillStyle=fl?'#fff':boss?'#3a3f4a':'#4a5238';X.fillRect(-16,-14,32,8);X.fillRect(-9,-20,18,7);X.fillStyle='#222';X.fillRect(-30,-18,22,3);X.fillRect(2,-22,5,2);X.restore()}
 function btn(x,y,w,h,s,c,sz){X.fillStyle='rgba(0,0,0,.65)';X.fillRect(x,y,w,h);X.strokeStyle=c;X.strokeRect(x+.5,y+.5,w-1,h-1);T(s,x+w/2,y+h/2+3,c,'center',sz||8)}
 const abBox=i=>{const n=P.ab.length,tw=n*52-6,x0=(W-tw)/2;return[x0+i*52,H-34,46,30]};
-function drawBat(){const ti=stage/3|0;X.save();if(B.shake>0)X.translate((R()-.5)*B.shake,(R()-.5)*B.shake);bg(B.th,ti);
+function drawBat(){const ti=B&&B.def?B.routeIndex%TH.length:stage/3|0;X.save();if(B.shake>0)X.translate((R()-.5)*B.shake,(R()-.5)*B.shake);bg(B.th,ti);
 if(B.smoke>0){X.fillStyle='rgba(220,220,220,.35)';for(let i=0;i<8;i++)X.fillRect(P.x+10+i*14,GY-30-((i*5)%12),22,26)}
 man(P.x,GY-(P.y||0),P.f||1,{me:1,b:'#7a6c3e',v:'#4a5a30',h:'#4e5a36'},0);
 for(const e of B.en){const f=e.fl>0;if(e.t=='heli'){heli(e,f);continue}zomb(e,f);
@@ -81,7 +81,7 @@ if(S=='battle'){if(x>W-52&&y<20)B.spd=B.spd==1?2:1;P.ab.forEach((a,i)=>{const[bx
 function pickPerk(i){const u=opts[i];if(!u)return;u.f();stats();msg='';S='map'}
 function pt(e){const r=C.getBoundingClientRect();return{x:(e.clientX-r.left)*W/r.width,y:(e.clientY-r.top)*H/r.height}}
 C.addEventListener('pointerdown',e=>{const p=pt(e);tap(p.x,p.y)});
-addEventListener('keydown',e=>{const k=e.key;if(k=='Enter'||k==' '){e.preventDefault();if(S=='map')startBattle();else if(S=='menu'||S=='over'||S=='win')newRun()}
+addEventListener('keydown',e=>{const k=e.key;if(k=='Enter'||k==' '){e.preventDefault();if(S=='map'){if(B&&B.def)beginSurvivalLocation(B.routeIndex);else startBattle()}else if(S=='menu'||S=='over'||S=='win')newRun()}
 if('12345'.includes(k)){if(S=='battle')useAb(+k-1);else if(S=='perk')pickPerk(+k-1)}if((k=='x'||k=='X')&&S=='battle')B.spd=B.spd==1?2:1});
 const rr=(x,y,w,h,r,c)=>{X.fillStyle=c;X.beginPath();X.roundRect?X.roundRect(x,y,w,h,r):X.rect(x,y,w,h);X.fill()};
 const hz=s=>Math.abs(Math.sin(s*127.1)*43758.5453)%1;
@@ -412,7 +412,7 @@ ET.crawl={hp:18,spd:34,dmg:6,rate:.8,stop:14,sc:14,arm:0};ET.fat={hp:130,spd:13,
 ZK.inf.sk=null;ZK.inf.cl=null;ZK.rush.sk=null;ZK.rush.cl=null;ZK.crawl={sk:null,cl:null,spd:.9,sc:1,v:'crawl'};ZK.fat={sk:'#9aa070',cl:null,spd:.5,sc:1.15,v:'fat'};ZK.spit={sk:'#7aa060',cl:'#2e3a30',spd:.6,sc:1,v:'spit'};ZK.sold={sk:null,cl:'#4a5a30',spd:.5,sc:1,v:'sold'};
 PAY.crawl=[6,8];PAY.fat=[45,50];PAY.spit=[22,30];PAY.sold=[38,45];
 const SKT=['#8c9d86','#a09a82','#7f8f94','#9a8a7a','#76846c'],CLT=['#4a463c','#3a4a58','#5a2a22','#3c4034','#5a5a50','#40304a','#6a5a3a','#2e3a30','#7a7a80'],BLD={w:76},BS=[135,195,255],TS=[165,225,285,345],TOOLS=['bar','spk','mine','flame','fix'],TL=['BARRICADE £40','SPIKES £30','MINES £60','FLAMER £90','REPAIR'],DAYLEN=120;
-const nightI=p=>p<.5?0:p<.62?(p-.5)/.12:p<.94?1:(1-p)/.06,DEFT=()=>{const p=(B.tm%DAYLEN)/DAYLEN;return 'NIGHT '+Math.min(5,B.ni)+'/5 - '+(p<.06?'DAWN':p<.5?'DAY':p<.62?'DUSK':'NIGHT')};
+const nightI=p=>p<.5?0:p<.62?(p-.5)/.12:p<.94?1:(1-p)/.06,DEFT=()=>{const p=(B.tm%DAYLEN)/DAYLEN;return 'LOCATION '+((B.routeIndex||0)+1)+'/5 - '+(p<.06?'DAWN':p<.5?'DAY':p<.62?'DUSK':'NIGHT')};
 function skinTex(){const cv=document.createElement('canvas');cv.width=cv.height=128;const g=cv.getContext('2d');g.fillStyle='#ffffff';g.fillRect(0,0,128,128);for(let i=0;i<60;i++){g.fillStyle='rgba('+(i%3?'70,40,60':'60,90,50')+','+(.05+hz(i)*.12)+')';g.beginPath();g.ellipse(hz(i+1)*128,hz(i+2)*128,4+hz(i+3)*16,3+hz(i+4)*10,hz(i+5)*3,0,6.3);g.fill()}g.strokeStyle='rgba(60,50,90,.28)';g.lineWidth=1;for(let i=0;i<14;i++){g.beginPath();g.moveTo(hz(i+30)*128,hz(i+31)*128);g.bezierCurveTo(hz(i+32)*128,hz(i+33)*128,hz(i+34)*128,hz(i+35)*128,hz(i+36)*128,hz(i+37)*128);g.stroke()}g.fillStyle='rgba(90,10,10,.3)';for(let i=0;i<8;i++)g.fillRect(hz(i+50)*128,hz(i+51)*128,2+hz(i+52)*6,2+hz(i+53)*5);const t=new T3.CanvasTexture(cv);t.wrapS=t.wrapT=T3.RepeatWrapping;return t}
 function zombify2(M){const mt=M.mt;mt.skin.map=skinTex();mt.skin.needsUpdate=true;mt.tooth=mat('#d8d2b0',.6);mt.rag=mat('#3a342c',1);mt.sacm=new T3.MeshBasicMaterial({color:'#8aff3a'});M.teeth=new T3.Group();M.head.add(M.teeth);for(let i=0;i<5;i++)mesh(BX(.008,.016,.01),mt.tooth,.099,.05,-.03+i*.015,M.teeth);
 M.rags=new T3.Group();M.pel.add(M.rags);for(let i=0;i<8;i++){const a=i/8*6.28,r=mesh(BX(.1,.13+hz(i)*.08,.01),mt.rag,Math.cos(a)*.13,-.1,Math.sin(a)*.2,M.rags);r.rotation.y=-a}M.belly=mesh(SPH(.22,14,10),mt.uni,.08,.2,0,M.tor);M.belly.scale.set(.9,1,1.15);M.sac=mesh(SPH(.05,10,8),mt.sacm,.06,.6,0,M.tor);
@@ -476,12 +476,112 @@ L(BLD.w+4,GY-70,120,.95);L(34,GY-80,70,.7);const f=P.f||1,a=P.aim||0,ang=f>0?a:M
 for(const t of B.traps)if(t.k=='flame'&&t.on>0)L(t.x+36,GY-14,80,.9);for(const e of B.en)if(e.burn>0)L(e.x,GY-26,42,.8);if(P.cd>1/P.fr-.07)L(P.x+f*24,GY-(P.y||0)-35,70,.8);for(const p of B.px)if(p.r>8&&p.c!='#4a4a4a')L(p.x,p.y,p.r*2.2,.8);
 NX.globalCompositeOperation='source-over';X.drawImage(NC,0,0,W,H);for(let i=0;i<70;i++){X.fillStyle='rgba(255,255,255,'+(n*(.35+.5*hz(i+3))*(.75+.25*Math.sin(tm*2+i))).toFixed(2)+')';X.fillRect(hz(i)*W,26+hz(i+9)*(GY-150),1,1)}const mg=X.createRadialGradient(392,46,2,392,46,34);mg.addColorStop(0,'rgba(220,230,255,'+(.5*n)+')');mg.addColorStop(1,'rgba(220,230,255,0)');X.fillStyle=mg;X.fillRect(350,4,84,84);el(392,46,9,9,'rgba(238,242,255,'+(.95*n)+')')}X.restore()}
 function defHUD(){const ph=(B.tm%DAYLEN)/DAYLEN;X.fillStyle='rgba(0,0,0,.55)';X.fillRect(W/2-62,24,124,7);const g=X.createLinearGradient(W/2-60,0,W/2+60,0);[[0,'#f5c86a'],[.25,'#6ab0ff'],[.5,'#6ab0ff'],[.6,'#e8803a'],[.78,'#1a2050'],[.94,'#1a2050'],[1,'#f5c86a']].forEach(a=>g.addColorStop(a[0],a[1]));X.fillStyle=g;X.fillRect(W/2-60,26,120,3);X.fillStyle='#fff';X.fillRect(W/2-60+ph*120-1,24,2,7);
-X.fillStyle='#222';X.fillRect(8,56,90,6);X.fillStyle='#5a9ad8';X.fillRect(8,56,90*cl(B.bld.hp/B.bld.mhp,0,1),6);T('OUTPOST '+Math.max(0,B.bld.hp|0),102,62,'#9ab8d8','left',7);TOOLS.forEach((k,i)=>btn(8+i*88,H-62,84,20,TL[i],B.tool==k?'#fc4':'#8a9a7a',7));if(B.tm<10)T('Build barricades & traps with the toolbar. Survive 5 nights.',W/2,H-68,'rgba(216,224,200,.85)','center',8)}
+X.fillStyle='#222';X.fillRect(8,56,90,6);X.fillStyle='#5a9ad8';X.fillRect(8,56,90*cl(B.bld.hp/B.bld.mhp,0,1),6);T('OUTPOST '+Math.max(0,B.bld.hp|0),102,62,'#9ab8d8','left',7);TOOLS.forEach((k,i)=>btn(8+i*88,H-62,84,20,TL[i],B.tool==k?'#fc4':'#8a9a7a',7));if(B.tm<10)T('Build defences with the toolbar. Hold this location until dawn, then advance.',W/2,H-68,'rgba(216,224,200,.85)','center',8)}
 const bg3=bg;bg=function(th,ti){bg3(th,ti);if(B&&B.def&&(S=='battle'||S=='over'||S=='win')){drawBld();for(const t of B.traps)drawTrap(t);if(B.tool)drawSlots()}};
 const db5=drawBat;drawBat=function(){db5();if(!B.def)return;const tm=performance.now()/1000,ph=(B.tm%DAYLEN)/DAYLEN;for(const b of B.bars)drawBar(b);for(const e of B.en)if(e.burn>0){X.save();X.globalCompositeOperation='lighter';const gx=e.x,gy=GY-26,g=X.createRadialGradient(gx,gy,0,gx,gy,22);g.addColorStop(0,'rgba(255,170,60,.7)');g.addColorStop(1,'rgba(255,80,0,0)');X.fillStyle=g;X.fillRect(gx-22,gy-30,44,50);X.restore()}nightFx(B.n||0,ph,tm);defHUD()};
 const menu1=menu;menu=function(){menu1();btn(W/2-95,274,190,20,'SURVIVAL: DEFEND THE OUTPOST','#e84',9)};
 const tap5=tap;tap=function(x,y){if(S=='menu'&&inR(x,y,W/2-95,274,190,20)){newRun();startDef();return}if(S=='battle'&&B.def&&defTap(x,y))return;tap5(x,y)};
-const end0=end;end=function(t,c,s){if(B&&B.def){if(t=='VICTORY'){t='DAWN BREAKS';s='You held the outpost for 5 nights'}else{t='OUTPOST OVERRUN';s='Survived '+Math.max(0,Math.min(5,B.ni-1))+' nights'}}end0(t,c,s)};
+const end0=end;end=function(t,c,s){if(B&&B.def){if(t=='VICTORY'){t='MARCH COMPLETE';s='You cleared all five locations'}else{t='OUTPOST OVERRUN';s='The route ended at location '+((B.routeIndex||0)+1)+' of 5'}}end0(t,c,s)};
+
+/* PROGRESSIVE CRUSADER ROUTE — isolated survival-mode progression */
+function drawSurvivalRouteMap(){
+  const idx=cl(B.routeIndex||0,0,4),ti=idx%TH.length,th=TH[ti];
+  const names=['FALKLANDS','GULF FRONT','IRAQ OUTSKIRTS','HELMAND VALLEY','THE LAST CITADEL'];
+  const subtitles=['Secure the landing zone','Break the desert siege','Clear the ruined approach','Hold the mountain pass','Defend the final stronghold'];
+  bg(th,ti);
+  X.fillStyle='rgba(5,9,8,.82)';X.fillRect(0,0,W,H);
+  T('THE CRUSADER’S MARCH',W/2,23,'#d8e0c8','center',15);
+  T('CAMPAIGN ROUTE  •  LOCATION '+(idx+1)+' / 5',W/2,39,'#c8a64a','center',8);
+  const pts=[{x:34,y:91},{x:137,y:72},{x:240,y:91},{x:343,y:72},{x:446,y:91}];
+  X.lineWidth=2;X.strokeStyle='rgba(190,180,140,.5)';X.beginPath();pts.forEach((p,i)=>{if(i===0)X.moveTo(p.x,p.y);else X.lineTo(p.x,p.y)});X.stroke();
+  pts.forEach((p,i)=>{
+    const done=i<idx,current=i===idx;
+    X.fillStyle=done?'#668b55':current?'#d5ad55':'#454b46';
+    X.beginPath();X.arc(p.x,p.y,current?9:7,0,Math.PI*2);X.fill();
+    X.strokeStyle=current?'#fff0bd':'#8a9185';X.lineWidth=current?1.6:1;X.stroke();
+    if(done){T('✓',p.x,p.y+3,'#fff','center',8)}
+    T(''+(i+1),p.x,p.y+22,current?'#f4d78d':done?'#9cbd83':'#777','center',7);
+  });
+  T(names[idx],W/2,125,'#f0dfb4','center',13);
+  T(subtitles[idx],W/2,139,'#aeb9a5','center',8);
+  T('Defend this location through one day/night cycle.',W/2,153,'#d8e0c8','center',8);
+  T('After dawn, your force moves to the next position.',W/2,165,'#8f9c8a','center',7);
+  T('HP '+Math.max(0,P.hp|0)+' / '+(P.mhp|0)+'     ATK '+(P.atk|0)+'     DEF '+(P.def|0)+'     £'+(P.money||0),W/2,178,'#e0d5b6','center',8);
+  btn(W/2-145,190,90,23,'CUSTOMISE [C]','#9c6',7);
+  btn(W/2-45,190,90,23,'DEPLOY','#c8a64a',10);
+  btn(W/2+55,190,90,23,'SHOP [S]','#fc4',8);
+  T('Completed locations remain secured. Threat and rewards increase along the route.',W/2,232,'#778476','center',7);
+  T('WASD / ARROWS: MOVE     SPACE: ACTION     1–7: ABILITIES',W/2,254,'#9aa88a','center',7);
+}
+function beginSurvivalLocation(index){
+  const idx=cl(index==null?0:index,0,4);
+  stage=Math.min(9,idx*3);
+  B={
+    t:0,en:[],q:[],tr:[],px:[],fx:[],sp:0,smoke:0,
+    eM:1+idx*.15,end:0,shake:0,fl:0,spd:1,
+    cd:P.ab.map(()=>0),th:TH[idx%TH.length],def:1,routeIndex:idx,
+    tm:0,dsp:2.8,bars:[mkBar(BS[0])],traps:[],
+    bld:{hp:700,mhp:700},tool:null,ni:1,n:0,lastNi:1,
+    bossN:{},horde:{},hq:0,hd:0,hr:[],sc:0
+  };
+  P.x=110;
+  B.fx.push({x:W/2,y:90,s:'LOCATION '+(idx+1)+'/5 - DEFEND UNTIL DAWN',c:'#fc4',l:3.5});
+  S='battle';
+}
+startDef=function(){
+  AUTO=false;
+  P.money=120;
+  P.hp=P.mhp;
+  beginSurvivalLocation(0);
+};
+const drawMapBeforeProgression=drawMap;
+drawMap=function(){
+  if(B&&B.def){drawSurvivalRouteMap();return;}
+  drawMapBeforeProgression();
+};
+const tapBeforeProgression=tap;
+tap=function(x,y){
+  if(S==='map'&&B&&B.def&&x>W/2-45&&x<W/2+45&&y>190&&y<213){
+    beginSurvivalLocation(B.routeIndex);
+    return;
+  }
+  tapBeforeProgression(x,y);
+};
+const campaignBattleUpdate=bat;
+bat=function(dt){
+  if(!B||!B.def){campaignBattleUpdate(dt);return;}
+  if(B.end<0){bat4(dt);return;}
+  const d=dt*B.spd;
+  const phase=(B.tm%DAYLEN)/DAYLEN;
+  B.tm+=d;
+  B.n=nightI(phase);
+  B.ni=1;
+  B.eM=1+(B.routeIndex||0)*.15;
+  director(d,B.n,(B.routeIndex||0)+1);
+  defAI(dt,d,B.n);
+  const fats=B.en.filter(e=>e.t==='fat');
+  bat4(dt);
+  for(const e of fats)if(!B.en.includes(e))acidBurst(e);
+  if(B.end===1)B.end=0;
+  if(B.end<0)return;
+  if(B.tm>=DAYLEN){
+    const next=(B.routeIndex||0)+1;
+    if(next>=5){
+      if(score>best){best=score;try{localStorage.setItem('ikbest',best)}catch(e){}}
+      S='win';
+      return;
+    }
+    score+=next*50;
+    P.money=(P.money||0)+100+next*50;
+    P.hp=Math.min(P.mhp,P.hp+P.mhp*.35);
+    B.routeIndex=next;
+    B.en=[];B.q=[];B.tr=[];B.traps=[];B.tool=null;
+    B.tm=DAYLEN;B.n=0;B.ni=1;
+    stage=Math.min(9,next*3);
+    S='map';
+  }
+};
+
 let last=performance.now();
 function loop(n){const dt=Math.min(.05,(n-last)/1000);last=n;X.setTransform(2,0,0,2,0,0);
 if(S=='menu')menu();else if(S=='map')drawMap();else if(S=='perk')drawPerk();else if(S=='load')drawLoad();else if(S=='custom')drawCust();else if(S=='shop')drawShop();else{if(S=='battle')bat(dt);drawBat();if(S=='over')end('KILLED IN ACTION','#e44','Fell on stage '+(stage+1)+' of 12');if(S=='win')end('VICTORY','#8c4','Campaign complete: all four theatres cleared')}
