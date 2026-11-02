@@ -484,6 +484,7 @@ const tap5=tap;tap=function(x,y){if(S=='menu'&&inR(x,y,W/2-95,274,190,20)){newRu
 const end0=end;end=function(t,c,s){if(B&&B.def){if(t=='VICTORY'){t='MARCH COMPLETE';s='You cleared all five locations'}else{t='OUTPOST OVERRUN';s='The route ended at location '+((B.routeIndex||0)+1)+' of 5'}}end0(t,c,s)};
 
 /* PROGRESSIVE CRUSADER ROUTE — isolated survival-mode progression */
+TH.push({n:'THE LAST CITADEL',op:'OP LAST STAND',sky:['#59616b','#a99a83'],hill:'#514b43',gnd:'#71634f',gd:'#493f35',city:1});
 function drawSurvivalRouteMap(){
   const idx=cl(B.routeIndex||0,0,4),ti=idx%TH.length,th=TH[ti];
   const names=['FALKLANDS','GULF FRONT','IRAQ OUTSKIRTS','HELMAND VALLEY','THE LAST CITADEL'];
